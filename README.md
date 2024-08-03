@@ -1,0 +1,1 @@
+This repository contains the code for a final project on 'Services, Microservices and DevOps', developed as part of a course offered by the UEM Faculty of Engineering. The project, supported by the Polytechnic of Milan, focuses on creating a microservices-based system for hotel and restaurant management.
