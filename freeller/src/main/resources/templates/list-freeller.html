@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>List Freellencers</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+<body>
+    <h1>Freellencers List</h1>
+    <button onclick="toggleForm()">Add Freellencers</button>
+    
+    <!-- Formulário escondido inicialmente -->
+    <div id="freellerForm" style="display: none;">
+        <h2>Add New Freeller</h2>
+        <form action="/freellers/new" method="post">
+            <label for="name">Freeller Name:</label>
+            <input type="text" id="name" name="name" required><br>
+            <label for="personaldescription">Personal Description:</label>
+            <input type="text" id="personaldescription" name="personaldescription" required><br>
+            <label for="tecnicaldescription">Tecnical Description:</label>
+            <input type="text" id="tecnicaldescription" name="tecnicaldescription"><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email"><br>
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location"><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    
+    <table id="freellerListTable" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Personal Description</th>
+                <th>Tecnical Description</th>
+                <th>Email</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="freeller : ${freellers}">
+                <td th:text="${freeller.id}"></td>
+                <td th:text="${freeller.name}"></td>
+                <td th:text="${freeller.personaldescription}"></td>
+                <td th:text="${freeller.tecnicaldescription != null ? freeller.tecnicaldescription : 'N/A'}"></td>
+                <td th:text="${freeller.email != null ? freeller.email : 'robsonnnsoares@gmail.com'}"></td>
+                <td th:text="${freeller.location != null ? freeller.location : 'Maputo'}"></td>
+                <td>
+                    <button onclick="deleteFreeller([[${freeller.id}]])">Delete</button>
+                    <button id="editBotton"  onclick="toggleFormDelete()">Edit</button>
+                    <!--onclick="editFreeler([[${freeller.id}]])"-->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div id="freellerEditForm" style="display: none;">
+        <h2>Edit Freeller</h2>
+        <form id="editForm" action="/freellers/{id}" method="POST" onsubmit="submitEditForm(event)">
+            <input type="hidden" id="freellerId" name="id">
+            <label for="editName">Freeller Name:</label>
+            <input type="text" id="editName" name="name" required><br>
+            <label for="editPersonalDescription">Personal Description:</label>
+            <input type="text" id="editPersonalDescription" name="personaldescription" required><br>
+            <label for="editTecnicalDescription">Tecnical Description:</label>
+            <input type="text" id="editTecnicalDescription" name="tecnicaldescription"><br>
+            <label for="editEmail">Email:</label>
+            <input type="text" id="editEmail" name="email"><br>
+            <label for="editLocation">Location:</label>
+            <input type="text" id="editLocation" name="location"><br>
+            <button type="submit" onclick="editFreeler([[${freeller.id}]])">Update</button>
+        </form>
+    </div>
+
+    <script>
+        function deleteFreeller(id) {
+            if (confirm('Are you sure you want to delete this job?')) {
+                fetch('/freellers/' + id + '/delete', {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Freeller deleted successfully');
+                        location.reload();
+                    } else {
+                        alert('Failed to delete freeller');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function toggleForm() {
+            var form = document.getElementById('freellerForm');
+            form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+        }
+
+        const botao = document.getElementById('editBotton');
+        const formulario = document.getElementById('freellerEditForm');
+
+        botao.addEventListener('click', () => {
+            console.log('Botão clicado!');
+            formulario.style.display = 'block'; 
+        function editFreeler(id) {
+            // Mostrar o formulário de edição
+            document.getElementById('freellerEditForm').style.display = 'block';
+
+            
+            fetch('/freellerss/' + id) 
+                .then(response => response.json())
+                .then(data => {
+                    
+                    document.getElementById('freellerId').value = data.id;
+                    document.getElementById('editName').value = data.name;
+                    document.getElementById('editPersonalDescription').value = data.personaldescription;
+                    document.getElementById('editTecnicalDescription').value = data.tecnicaldescription || '';
+                    document.getElementById('editEmail').value = data.email || '';
+                    document.getElementById('editLocation').value = data.location;
+                })
+                .catch(error => console.error('Error fetching job details:', error));
+        }
+    });
+        function submitEditForm(event) {
+            event.preventDefault();
+            const id = document.getElementById('freellerId').value;
+            const freellerData = {
+                name: document.getElementById('editName').value,
+                personaldescription: document.getElementById('editPersonaDescription').value,
+                tecnicaldescription: document.getElementById('editTecnicalDescription').value,
+                email: document.getElementById('editEmail').value,
+                location: document.getElementById('editLocation').value
+            };
+
+            fetch('/freellerss/' + id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jobData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Freeller updated successfully');
+                    location.reload(); // Atualiza a página para ver as mudanças
+                } else {
+                    alert('Failed to update Freeller');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

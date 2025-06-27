@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  hotel-home:
+    build: ./hotel-home # Caminho para o diretório do serviço de home
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  freeller:
+    build: ./freeller # Caminho para o diretório do serviço de freelancers
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
+
+  home:
+      build: ./hotel  # Caminho para o diretório do serviço de jobs
+      ports:
+        - "8081:8081"
+      networks:
+        - app-network
+
+  jobhunter:
+    build: ./jobhunter  # Caminho para o diretório do serviço de jobhunters
+    ports:
+      - "8083:8083"
+    networks:
+      - app-network
+
+  login:
+    build: ./login  # Caminho para o diretório do serviço de login
+    ports:
+      - "8084:8084"
+    networks:
+      - app-network
+
+networks:
+  app-network:
