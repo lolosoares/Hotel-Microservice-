@@ -25,14 +25,14 @@ services:
   jobhunter:
     build: ./jobhunter  # Caminho para o diretório do serviço de jobhunters
     ports:
-      - "8083:8083"
+      - "8084:8084"
     networks:
       - app-network
 
   login:
     build: ./login  # Caminho para o diretório do serviço de login
     ports:
-      - "8084:8084"
+      - "8083:8083"
     networks:
       - app-network
 
